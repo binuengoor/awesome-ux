@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Anti-FOUC (Flash of Unstyled Content): Guarantees zero white flashes -->
+  <style>
+    :root, html, body {
+      background-color: #000000 !important;
+      color-scheme: dark !important;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <!-- Aurora Stylesheet -->
+  <link rel="stylesheet" href="../src/aurora.css">
+</head>
+<body style="background: #000000; color: #fff; font-family: sans-serif;">
+
+  <!-- Ambient Light Layer -->
+  <aurora-background speed="1.0" intensity="0.95"></aurora-background>
+
+  <!-- Your UI Content Goes Here -->
+  <main style="position: relative; z-index: 10; padding: 3rem 2rem; max-width: 600px; margin: 0 auto; text-align: center;">
+    <h1>Hello World</h1>
+    <p style="color: #94a3b8;">The ambient aurora breathes gently in the background.</p>
+  </main>
+
+  <!-- Aurora WebGL & Web Component Script -->
+  <script src="../src/aurora.js"></script>
+</body>
+</html>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <meta name="view-transition" content="same-origin">
+  <title>Google Gemini iOS Ambient Aurora — Awesome UX</title>
+
+  <!-- Anti-FOUC: Zero-latency pure black initialization -->
+  <style>
+    :root, html, body {
+      background-color: #000000 !important;
+      color-scheme: dark !important;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <!-- Aurora Base Styles -->
+  <link rel="stylesheet" href="../src/aurora.css">
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      min-height: 100vh;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-spark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(129, 140, 248, 0.4);
+    }
+
+    .brand-spark svg {
+      width: 16px;
+      height: 16px;
+      color: #000;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.7));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    .hero-container {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 2rem;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .pill-tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+      margin: 0 0 1.25rem;
+      background: linear-gradient(180deg, #ffffff 30%, rgba(255, 255, 255, 0.7));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #94a3b8;
+      max-width: 640px;
+      line-height: 1.6;
+      margin: 0 auto 2.5rem;
+      font-weight: 400;
+    }
+
+    /* Gemini-Style Interactive Voice Bar */
+    .interaction-bar {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(18, 20, 26, 0.7);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 0.75rem 1rem 0.75rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      margin-bottom: 2.5rem;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .interaction-bar:focus-within,
+    .interaction-bar.active {
+      border-color: rgba(129, 140, 248, 0.45);
+      box-shadow: 0 20px 50px -10px rgba(99, 102, 241, 0.25), 0 0 0 1px rgba(129, 140, 248, 0.3);
+    }
+
+    .interaction-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-family: inherit;
+      flex: 1;
+    }
+
+    .interaction-input::placeholder {
+      color: #64748b;
+    }
+
+    .voice-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .voice-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(1.05);
+    }
+
+    .voice-btn.active {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+    }
+
+    /* Floating Glass HUD Controller */
+    .controls-card {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      max-width: 760px;
+      background: rgba(14, 17, 24, 0.75);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+      margin-bottom: 3rem;
+      text-align: left;
+    }
+
+    .controls-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    .controls-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .controls-status {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    .mood-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mood-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      border-radius: 9999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mood-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .mood-btn.active {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.1);
+    }
+
+    .mood-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .indicator-auto { background: linear-gradient(135deg, #10b981, #3b82f6, #a855f7, #f43f5e); }
+    .indicator-emerald { background: #10b981; box-shadow: 0 0 6px #10b981; }
+    .indicator-sapphire { background: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+    .indicator-violet { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+    .indicator-amber { background: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
+
+    /* Sliders grid */
+    .sliders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .slider-val {
+      color: #f1f5f9;
+      font-family: monospace;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Actions bar */
+    .controls-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f1f5f9;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .action-btn.primary {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      font-weight: 600;
+    }
+
+    .action-btn.primary:hover {
+      background: #e2e8f0;
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 4rem;
+      text-align: left;
+    }
+
+    .feature-card {
+      background: rgba(14, 17, 24, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: #38bdf8;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin: 0 0 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    footer a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    footer a:hover {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Ambient Aurora Custom Web Component -->
+  <aurora-background id="aurora" speed="1.0" intensity="0.95" mood="auto"></aurora-background>
+
+  <!-- Navigation Bar with Backdrop Blur -->
+  <header class="nav-bar">
+    <a href="#" class="brand">
+      <div class="brand-spark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/>
+        </svg>
+      </div>
+      <span class="brand-title">Awesome UX</span>
+      <span class="brand-badge">Design #01</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="https://github.com/binuengoor/awesome-ux" target="_blank" rel="noopener" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Content -->
+  <main class="hero-container">
+    <div class="pill-tag">
+      <span class="pill-tag-dot"></span>
+      Google Gemini iOS Ambient Light Spec
+    </div>
+
+    <h1>Living, Breathing Light.</h1>
+    <p class="subtitle">
+      Modeled directly after Google Gemini on iOS. An organic ambient light that gently breathes, ebbs, flows, and recedes into pure OLED black.
+    </p>
+
+    <!-- Gemini-style Voice / Prompt Bar -->
+    <div class="interaction-bar" id="interactionBar">
+      <input type="text" class="interaction-input" placeholder="Type a message or trigger voice pulse..." id="demoInput">
+      <button class="voice-btn" id="voiceBtn" title="Simulate Gemini Thinking / Speaking Pulse">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Floating Controller HUD -->
+    <div class="controls-card">
+      <div class="controls-header">
+        <span class="controls-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Live Shader Controls
+        </span>
+        <span class="controls-status" id="shaderStatus">WebGL ACTIVE • 60 FPS</span>
+      </div>
+
+      <!-- Mood selection pills -->
+      <div class="mood-tabs">
+        <button class="mood-btn active" data-mood="auto">
+          <span class="mood-indicator indicator-auto"></span>
+          Auto Mood Cycle
+        </button>
+        <button class="mood-btn" data-mood="emerald">
+          <span class="mood-indicator indicator-emerald"></span>
+          Emerald & Teal
+        </button>
+        <button class="mood-btn" data-mood="sapphire">
+          <span class="mood-indicator indicator-sapphire"></span>
+          Sapphire & Azure
+        </button>
+        <button class="mood-btn" data-mood="violet">
+          <span class="mood-indicator indicator-violet"></span>
+          Electric Violet
+        </button>
+        <button class="mood-btn" data-mood="amber">
+          <span class="mood-indicator indicator-amber"></span>
+          Warm Rose & Amber
+        </button>
+      </div>
+
+      <!-- Sliders -->
+      <div class="sliders-grid">
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Breathing Speed</span>
+            <span class="slider-val" id="speedVal">1.0x</span>
+          </div>
+          <input type="range" id="speedSlider" min="0.2" max="3.0" step="0.1" value="1.0">
+        </div>
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Peak Luminescence</span>
+            <span class="slider-val" id="intensityVal">0.95</span>
+          </div>
+          <input type="range" id="intensitySlider" min="0.3" max="1.8" step="0.05" value="0.95">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="controls-actions">
+        <button class="action-btn primary" id="burstBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          Trigger Wake Pulse (4s)
+        </button>
+        <button class="action-btn" id="copyCodeBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+          Copy HTML Tag
+        </button>
+        <button class="action-btn" id="toggleStateBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+          Pause / Sleep
+        </button>
+      </div>
+    </div>
+
+    <!-- Architectural Features Grid -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">True OLED Black Fidelity</h3>
+        <p class="feature-desc">
+          Rest envelopes spend 30–35% of each cycle completely at 0.0, allowing pixels on OLED displays to completely turn off.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Ultra-Soft Gaussian Math</h3>
+        <p class="feature-desc">
+          Zero rainbow banding or harsh edges. Light is synthesized via exponential falloff with chromatic simplex coordinate warping.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="m9 8 6 4-6 4Z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">1 Draw Call & Zero CPU Overhead</h3>
+        <p class="feature-desc">
+          DPR is clamped to 1.25x for battery efficiency. The render loop automatically suspends when the tab is hidden or backgrounded.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Copied &lt;aurora-background&gt; snippet to clipboard!</div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Part of <a href="https://github.com/binuengoor/awesome-ux" target="_blank" rel="noopener">Awesome UX</a> • Curated by Binu Engoor • Open Source MIT License</p>
+  </footer>
+
+  <!-- Aurora Script -->
+  <script src="../src/aurora.js"></script>
+
+  <!-- Interactive Demo Controller Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const auroraEl = document.getElementById('aurora');
+      const voiceBtn = document.getElementById('voiceBtn');
+      const interactionBar = document.getElementById('interactionBar');
+      const burstBtn = document.getElementById('burstBtn');
+      const speedSlider = document.getElementById('speedSlider');
+      const speedVal = document.getElementById('speedVal');
+      const intensitySlider = document.getElementById('intensitySlider');
+      const intensityVal = document.getElementById('intensityVal');
+      const copyCodeBtn = document.getElementById('copyCodeBtn');
+      const toggleStateBtn = document.getElementById('toggleStateBtn');
+      const toast = document.getElementById('toast');
+      const moodBtns = document.querySelectorAll('.mood-btn');
+
+      // Mood Selection
+      moodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          moodBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mood = btn.getAttribute('data-mood');
+          if (auroraEl.setMood) {
+            auroraEl.setMood(mood);
+          } else {
+            auroraEl.setAttribute('mood', mood);
+          }
+        });
+      });
+
+      // Speed Slider
+      speedSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        speedVal.textContent = val.toFixed(1) + 'x';
+        if (auroraEl.setSpeed) {
+          auroraEl.setSpeed(val);
+        } else {
+          auroraEl.setAttribute('speed', val);
+        }
+      });
+
+      // Intensity Slider
+      intensitySlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        intensityVal.textContent = val.toFixed(2);
+        if (auroraEl.setIntensity) {
+          auroraEl.setIntensity(val);
+        } else {
+          auroraEl.setAttribute('intensity', val);
+        }
+      });
+
+      // Active / Wake Pulse
+      function triggerPulse(durationMs = 4000) {
+        voiceBtn.classList.add('active');
+        interactionBar.classList.add('active');
+        auroraEl.setActive(true, durationMs);
+        setTimeout(() => {
+          voiceBtn.classList.remove('active');
+          interactionBar.classList.remove('active');
+        }, durationMs);
+      }
+
+      voiceBtn.addEventListener('click', () => triggerPulse(4500));
+      burstBtn.addEventListener('click', () => triggerPulse(4000));
+
+      // Pause / Resume Toggle
+      let isPaused = false;
+      toggleStateBtn.addEventListener('click', () => {
+        if (!window.auroraEffect) return;
+        if (isPaused) {
+          window.auroraEffect.startLoop();
+          toggleStateBtn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="6" y="4" width="4" height="16"/>
+              <rect x="14" y="4" width="4" height="16"/>
+            </svg> Pause / Sleep
+          `;
+          isPaused = false;
+        } else {
+          window.auroraEffect.stopLoop();
+          toggleStateBtn.innerHTML = `
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg> Resume Light
+          `;
+          isPaused = true;
+        }
+      });
+
+      // Copy Code Tag
+      copyCodeBtn.addEventListener('click', () => {
+        const snippet = '<aurora-background speed="1.0" intensity="0.95"></aurora-background>';
+        navigator.clipboard.writeText(snippet).then(() => {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2800);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
